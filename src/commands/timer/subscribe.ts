@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, PermissionFlagsBits, User } from 'discord.js'
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
-import { syncDatabaseToTimerList, TimerList } from '../../lib/dbHandler.js'
-import { getAutocompleteTimerNames } from '../../lib/common/miscUtils.js'
+import { syncDatabase, TimerList } from '../../lib/dbHandler.js'
+import { getAutocomplete } from '../../lib/common/miscUtils.js'
 
 @Discord()
 @SlashGroup({ name: 'timer' })
@@ -12,7 +12,7 @@ export class TimerSubscribe {
     searchTimerName: string,
     @SlashOption({
       autocomplete: (interaction: AutocompleteInteraction) => {
-        const autocompleteData = getAutocompleteTimerNames(interaction.options.getFocused())
+        const autocompleteData = getAutocomplete(interaction.options.getFocused(), TimerList)
 
         interaction.respond(autocompleteData)
       },
@@ -23,13 +23,25 @@ export class TimerSubscribe {
   
     @SlashOption({
       name: 'user',
+      description: 'Force subscribe a user',
       type: ApplicationCommandOptionType.User,
       required: false,
     })
     mentionedUser: User,
 
+    @SlashOption({
+      name: 'silent',
+      description: 'Should the command be only visible by you? (default: true)',
+      required: false,
+      type: ApplicationCommandOptionType.Boolean
+    })
+    silent: boolean,
+
     interaction: CommandInteraction
   ): Promise<void> {
+    if(silent == undefined){
+      silent = true
+    }
 
     const timer = TimerList[searchTimerName]
 
@@ -48,7 +60,7 @@ export class TimerSubscribe {
     if(mentionedUser != undefined){
       const guildMember = interaction.guild?.members.cache.get(user.id)
 
-      if(guildMember?.permissions.has(PermissionFlagsBits.ModerateMembers) == false){
+      if(guildMember?.permissions.has(PermissionFlagsBits.KickMembers) == false){
         interaction.reply({
           content: `⛔ Insufficient permissions required to subscribe a member!`,
           ephemeral: true,
@@ -64,21 +76,21 @@ export class TimerSubscribe {
 
     if(timer.subscribers.includes(user.id)){
       timer.subscribers.splice(timer.subscribers.indexOf(user.id), 1)
-      syncDatabaseToTimerList()
+      syncDatabase('/timers')
   
       interaction.reply({
         content: replyUnsub,
-        ephemeral: true,
+        ephemeral: silent,
       })
       return
     }
 
     timer.subscribers.push(user.id)
-    syncDatabaseToTimerList()
+    syncDatabase('/timers')
 
     interaction.reply({
       content: replySub,
-      ephemeral: true,
+      ephemeral: silent,
     })
   }
 }

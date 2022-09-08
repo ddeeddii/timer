@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonInteraction, CommandInteraction, MessageActionRowComponentBuilder } from 'discord.js'
 import { ButtonComponent, Discord } from 'discordx'
-import { addToTimerList } from '../../lib/dbHandler.js'
+import { createNewTimer } from '../../lib/dbHandler.js'
 import { TimerType } from '../../lib/types.js'
 import { currentTimerData } from './startTimer.js'
 
@@ -30,7 +30,7 @@ export class TimerButtons {
     // because stopwatch's date is undefined and
     // we need to get when the timer was created
     const rightNowDate = new Date()
-    addToTimerList(name, TimerType.stopwatch, rightNowDate, commandAuthorId as string)
+    createNewTimer(name, TimerType.stopwatch, rightNowDate, commandAuthorId as string)
     
     btnInteraction.reply({
       content: `Created a **stopwatch** timer!`,
@@ -55,7 +55,7 @@ export class TimerButtons {
     disableInteractionButtons(interaction, row, content)
 
     const commandAuthorId = interaction.member?.user.id
-    addToTimerList(name, TimerType.standard, date, commandAuthorId as string)
+    createNewTimer(name, TimerType.standard, date, commandAuthorId as string)
 
     btnInteraction.reply({
       content: `Created date timer '${currentTimerData.name}!'`,

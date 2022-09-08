@@ -13,8 +13,20 @@ export class TimerCheck {
     @SlashChoice({ name: 'Timer', value: 'timer' })
     @SlashChoice({ name: 'Counter', value: 'counter' })
 
+    silent: boolean,
+    @SlashOption({
+      name: 'silent',
+      description: 'Should the command be only visible by you? (default: true)',
+      required: false,
+      type: ApplicationCommandOptionType.Boolean
+    })
+
     interaction: CommandInteraction
   ): void {
+    if(silent == undefined){
+      silent = true
+    }
+
     let embed
 
     if(help == 'timer'){
@@ -33,7 +45,7 @@ export class TimerCheck {
         value: '**start** creates a new Timer. Date arguments are optional; if provided - creates a timer, if empty - creates a stopwatch\n'
         + '**check** displays information depending on Timer type; stopwatch - elapsed time, timer - end date, % left\n'
         + '**subscribe** you will be pinged when the timer sends out a notification\n'
-        + '**list** lists all timers and some of its data\n'
+        + '**list** lists all timers and its data\n'
         + '**help** display help about either Timers or Counters'
         },
 
@@ -51,6 +63,34 @@ export class TimerCheck {
     ])
     } else if(help == 'counter'){
       embed = new EmbedBuilder()
+      .setTitle('Counter Commands')
+      .setFooter({text: 'Made with ❤ by ded'})
+      .addFields([
+        {
+          name: '**__Information__**',
+          value: 'Every command has a silent argument (true by default). If set to true, everybody will see the command'
+        },
+
+        {
+        name: '**__Everyone__**',
+        value: '**create** creates a new Counter.\n'
+        + '**check** displays who created the Counter, and its value\n'
+        + '**list** lists all counters and its data\n'
+        + '**help** display help about either Timers or Counters'
+        },
+
+        {
+          name: '**__Counter creator__**',
+          value: '**add** add a number to a Counter\n'
+          + "**set** set a Counter's value\n"
+          + '**remove** remove a Counter'
+        },
+
+        {
+          name: '**__Moderators__**',
+          value: 'Moderators have unrestricted access to modify Counters'
+        },
+    ])
     } else { 
       interaction.reply({
         content: '⛔ Invalid argument!',
@@ -61,7 +101,7 @@ export class TimerCheck {
 
     interaction.reply({
       embeds: [embed],
-      ephemeral: true
+      ephemeral: silent
     })
   }
 }

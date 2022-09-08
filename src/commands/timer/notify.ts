@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, Channel, ChannelType, CommandInteraction, PermissionFlagsBits } from 'discord.js'
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
-import { syncDatabaseToTimerList, TimerList } from '../../lib/dbHandler.js'
-import { getAutocompleteTimerNames } from '../../lib/common/miscUtils.js'
+import { syncDatabase, TimerList } from '../../lib/dbHandler.js'
+import { getAutocomplete } from '../../lib/common/miscUtils.js'
 import { DateTime, Duration } from 'luxon'
 import { toHuman } from '../../lib/common/dateUtils.js'
 import { TimerType } from '../../lib/types.js'
@@ -15,7 +15,7 @@ export class TimerNotify {
     searchTimerName: string,
     @SlashOption({
       autocomplete: (interaction: AutocompleteInteraction) => {
-        const autocompleteData = getAutocompleteTimerNames(interaction.options.getFocused())
+        const autocompleteData = getAutocomplete(interaction.options.getFocused(), TimerList)
 
         interaction.respond(autocompleteData)
       },
@@ -55,9 +55,19 @@ export class TimerNotify {
       type: ApplicationCommandOptionType.Number
     }) 
     minutes: number,
+
+    @SlashOption({
+      name: 'silent',
+      description: 'Should the command be only visible by you? (default: true)',
+      required: false,
+      type: ApplicationCommandOptionType.Boolean
+    }) silent: boolean,
   
     interaction: CommandInteraction
   ): Promise<void> {
+    if(silent == undefined){
+      silent = true
+    }
 
     const timer = TimerList[searchTimerName]
 
@@ -81,11 +91,11 @@ export class TimerNotify {
         }
 
         timer.notifData[channel.id] = 'end'
-        syncDatabaseToTimerList()
+        syncDatabase('/timers')
 
         interaction.reply({
           content: content,
-          ephemeral: true,
+          ephemeral: silent,
         })
         return
       }
@@ -120,11 +130,11 @@ export class TimerNotify {
     }
 
     timer.notifData[channel.id] = timing.toISO()
-    syncDatabaseToTimerList()
+    syncDatabase('/timers')
 
     interaction.reply({
       content: content,
-      ephemeral: true,
+      ephemeral: silent,
     })
   }
 }

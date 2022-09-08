@@ -1,24 +1,23 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, PermissionFlagsBits } from 'discord.js'
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
-import { syncDatabase, TimerList } from '../../lib/dbHandler.js'
 import { getAutocomplete } from '../../lib/common/miscUtils.js'
+import { CounterList, syncDatabase } from '../../lib/dbHandler.js'
 
 @Discord()
-@SlashGroup({ name: 'timer' })
-export class TimerRemove {
-  @Slash({ name: 'remove', description: 'Delete a timer' })
-  @SlashGroup('timer')
+@SlashGroup({ name: 'counter' })
+export class RemoveCounter {
+  @Slash({ description: 'Remove a counter' })
+  @SlashGroup('counter')
   async remove(
-    searchTimerName: string,
+    searchCounterName: string,
     @SlashOption({
       autocomplete: (interaction: AutocompleteInteraction) => {
-        const autocompleteData = getAutocomplete(interaction.options.getFocused(), TimerList)
+        const autocompleteData = getAutocomplete(interaction.options.getFocused(), CounterList)
 
         interaction.respond(autocompleteData)
       },
-      name: 'timer-name',
+      name: 'counter-name',
       type: ApplicationCommandOptionType.String,
-
     })
 
     @SlashOption({
@@ -27,39 +26,40 @@ export class TimerRemove {
       required: false,
       type: ApplicationCommandOptionType.Boolean
     }) silent: boolean,
-
+    
     interaction: CommandInteraction
   ): Promise<void> {
     if(silent == undefined){
       silent = true
     }
 
-    const timer = TimerList[searchTimerName]
+    const counter = CounterList[searchCounterName]
 
-    if(timer == undefined){
+    if(counter == undefined){ // counter doesnt exist
       interaction.reply({
-        content: `⛔ No timer with name '${searchTimerName} found.`,
+        content: '⛔ Counter name already taken!',
         ephemeral: true,
       })
+
       return
     }
-    
-    const creatorId = timer.author
+
+    const creatorId = counter.author
     const userId = interaction.user.id
     const guildMember = interaction.guild?.members.cache.get(interaction.user.id)
     if(guildMember?.permissions.has(PermissionFlagsBits.ManageMessages) == false && creatorId != userId){
       interaction.reply({
-        content: `⛔ Insufficient permissions to remove a timer!`,
+        content: `⛔ Insufficient permissions to remove a counter!`,
         ephemeral: true,
       })
       return
     }
 
-    delete TimerList[searchTimerName]
+    delete CounterList[searchCounterName]
+    syncDatabase('/counters')
 
-    syncDatabase('/timers')
     interaction.reply({
-      content: `Removed timer '${searchTimerName}'.`,
+      content: `Removed counter '${searchCounterName}'.`,
       ephemeral: silent
     })
   }

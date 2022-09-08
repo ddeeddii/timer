@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, PermissionFlagsBits } from 'discord.js'
 import { Discord, Slash, SlashChoice, SlashGroup, SlashOption } from 'discordx'
-import { syncDatabaseToTimerList, TimerList } from '../../lib/dbHandler.js'
-import { getAutocompleteTimerNames } from '../../lib/common/miscUtils.js'
+import { syncDatabase, TimerList } from '../../lib/dbHandler.js'
+import { getAutocomplete } from '../../lib/common/miscUtils.js'
 import { DateTime } from 'luxon'
 
 @Discord()
@@ -13,7 +13,7 @@ export class TimerSubscribe {
     searchTimerName: string,
     @SlashOption({
       autocomplete: (interaction: AutocompleteInteraction) => {
-        const autocompleteData = getAutocompleteTimerNames(interaction.options.getFocused())
+        const autocompleteData = getAutocomplete(interaction.options.getFocused(), TimerList)
 
         interaction.respond(autocompleteData)
       },
@@ -31,9 +31,18 @@ export class TimerSubscribe {
     @SlashChoice({ name: 'Notifications', value: 'notifications' })
     @SlashChoice({ name: 'Subscribers', value: 'subscribers' })
 
+    silent: boolean,
+    @SlashOption({
+      name: 'silent',
+      description: 'Should the command be only visible by you? (default: true)',
+      required: false,
+      type: ApplicationCommandOptionType.Boolean
+    })
 
     interaction: CommandInteraction
   ): Promise<void> {
+
+
 
     const timer = TimerList[searchTimerName]
 
@@ -48,7 +57,7 @@ export class TimerSubscribe {
     const creatorId = timer.author
     const userId = interaction.user.id
     const guildMember = interaction.guild?.members.cache.get(interaction.user.id)
-    if(guildMember?.permissions.has(PermissionFlagsBits.ManageGuild) == false && creatorId != userId){
+    if(guildMember?.permissions.has(PermissionFlagsBits.ManageMessages) == false && creatorId != userId){
       interaction.reply({
         content: `⛔ Insufficient permissions required to reset timers!`,
         ephemeral: true,
@@ -67,7 +76,7 @@ export class TimerSubscribe {
 
       const timerDT = DateTime.fromJSDate(rightNow)
       const timeString = timerDT.setLocale('en-ZA').toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)
-      reply = `Set '${searchTimerName}''s start date to ${timeString}.`
+      reply = `Set **${searchTimerName}**'s start date to ${timeString}.`
     } else if(option == 'notifications') {
       timer.notifData = {}
       reply = `Removed all notification settings of '${searchTimerName}'.`
@@ -78,10 +87,10 @@ export class TimerSubscribe {
       reply = '⛔ Incorrect option parameter!'
     }
 
-    syncDatabaseToTimerList()
+    syncDatabase('/timers')
     interaction.reply({
       content: reply,
-      ephemeral: true
+      ephemeral: silent
     })
   }
 }

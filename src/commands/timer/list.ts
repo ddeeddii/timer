@@ -1,5 +1,5 @@
-import { Colors, CommandInteraction, EmbedBuilder } from 'discord.js'
-import { Discord, Slash, SlashGroup } from 'discordx'
+import { ApplicationCommandOptionType, Colors, CommandInteraction, EmbedBuilder } from 'discord.js'
+import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
 import { DateTime, Duration } from 'luxon'
 import { toHuman } from '../../lib/common/dateUtils.js'
 import { TimerList } from '../../lib/dbHandler.js'
@@ -12,12 +12,22 @@ const typeToString = {
 
 @Discord()
 @SlashGroup({ name: 'timer' })
-export class TimerCheck {
+export class ListTimers {
   @Slash({ name: 'list', description: 'Display all timers and their data' })
   @SlashGroup('timer')
   list(
+    @SlashOption({
+      name: 'silent',
+      description: 'Should the command be only visible by you? (default: true)',
+      required: false,
+      type: ApplicationCommandOptionType.Boolean
+    }) silent: boolean,
+
     interaction: CommandInteraction
   ): void {
+    if(silent == undefined){
+      silent = true
+    }
 
     const commandEmbed = new EmbedBuilder()
     .setColor(Colors.Green)
@@ -27,7 +37,7 @@ export class TimerCheck {
       commandEmbed.setDescription('No timers found! 😢')
       interaction.reply({
         embeds: [commandEmbed],
-        ephemeral: true
+        ephemeral: silent
       })
       return
     }
@@ -75,7 +85,7 @@ export class TimerCheck {
 
     interaction.reply({
       embeds: [commandEmbed],
-      ephemeral: true
+      ephemeral: silent
     })
   }
 }

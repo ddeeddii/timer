@@ -1,9 +1,8 @@
 import { ApplicationCommandOptionChoiceData } from 'discord.js'
-import { TimerList } from '../dbHandler.js'
+import { CounterListInterface, TimerListInterface } from '../types.js'
 
-export function getAutocompleteTimerNames(searchedString: string): Array<ApplicationCommandOptionChoiceData> {
-  const allNames = Object.keys(TimerList)
-
+export function getAutocomplete(searchedString: string, object: TimerListInterface | CounterListInterface): Array<ApplicationCommandOptionChoiceData> {
+  const allNames = Object.keys(object)
   const formattedNames: Array<ApplicationCommandOptionChoiceData> = []
 
   let filteredNames

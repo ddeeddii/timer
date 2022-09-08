@@ -1,6 +1,6 @@
 import { CronJob } from 'cron'
 import chalk from 'chalk'
-import { syncDatabaseToTimerList, TimerList } from './dbHandler.js'
+import { syncDatabase, TimerList } from './dbHandler.js'
 import { TimerData, TimerType } from './types.js'
 import { bot } from '../main.js'
 import { DateTime, Duration } from 'luxon'
@@ -34,7 +34,7 @@ function handleTimer(name: string, timerData: TimerData){
         channel.send(`**${name}** is here! 🎉 ${notification}`)
   
         delete TimerList[name]
-        syncDatabaseToTimerList()
+        syncDatabase('/timers')
       }
 
       return
@@ -81,7 +81,7 @@ function handleStopwatch(name: string, timerData: TimerData){
       channel.send(`${timeDiff} have elapsed since **${name}**! ${notification}`)
       
       TimerList[name].lastNotifDate = currentTime
-      syncDatabaseToTimerList()
+      syncDatabase('/timers')
     }
   }
 }

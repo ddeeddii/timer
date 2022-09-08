@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteracti
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
 import { DateTime } from 'luxon'
 import { getTimeDifference } from '../../lib/common/dateUtils.js'
-import { getAutocompleteTimerNames } from '../../lib/common/miscUtils.js'
+import { getAutocomplete } from '../../lib/common/miscUtils.js'
 import { TimerList } from '../../lib/dbHandler.js'
 import { TimerType } from '../../lib/types.js'
 
@@ -15,16 +15,27 @@ export class TimerCheck {
     searchText: string,
     @SlashOption({
       autocomplete: (interaction: AutocompleteInteraction) => {
-        const autocompleteData = getAutocompleteTimerNames(interaction.options.getFocused())
+        const autocompleteData = getAutocomplete(interaction.options.getFocused(), TimerList)
 
         interaction.respond(autocompleteData)
       },
       name: 'timer-name',
       type: ApplicationCommandOptionType.String,
     })
-    
+
+    @SlashOption({
+      name: 'silent',
+      description: 'Should the command be only visible by you? (default: true)',
+      required: false,
+      type: ApplicationCommandOptionType.Boolean
+    }) silent: boolean,
+
     interaction: CommandInteraction
   ): void {
+    if(silent == undefined){
+      silent = true
+    }
+
     const timer = TimerList[searchText]
     if(timer == undefined){
       interaction.reply({
@@ -43,7 +54,7 @@ export class TimerCheck {
 
       interaction.reply({
         content: replyContent,
-        ephemeral: true
+        ephemeral: silent
       })
       return
     }
@@ -61,7 +72,7 @@ export class TimerCheck {
     const replyContent = `${timeDiff} remaining until **${searchText}** (${timeString}). Only ${timePercentDiff}% remaining!`
     interaction.reply({
       content: replyContent,
-      ephemeral: true
+      ephemeral: silent
     })
   }
 }

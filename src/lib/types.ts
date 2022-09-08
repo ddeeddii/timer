@@ -3,6 +3,10 @@ export enum TimerType {
   standard
 }
 
+export interface GlobalDataInterface {
+  timers: TimerListInterface
+  counters: CounterListInterface
+}
 
 export interface TimerListInterface {
   [name: string]: TimerData
@@ -18,4 +22,13 @@ export interface TimerData{
   notifData: {
     [channel: string]: string
   }
+}
+
+export interface CounterListInterface {
+  [name: string]: CounterData
+}
+
+interface CounterData {
+  author: string,
+  value: number,
 }
