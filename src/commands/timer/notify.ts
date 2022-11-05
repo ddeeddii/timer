@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, Channel, ChannelType, CommandInteraction, PermissionFlagsBits } from 'discord.js'
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
-import { syncDatabase, TimerList } from '../../lib/dbHandler.js'
+import { dbPaths, syncDatabase, TimerList } from '../../lib/dbHandler.js'
 import { getAutocomplete } from '../../lib/common/miscUtils.js'
 import { DateTime, Duration } from 'luxon'
 import { toHuman } from '../../lib/common/dateUtils.js'
@@ -91,7 +91,7 @@ export class TimerNotify {
         }
 
         timer.notifData[channel.id] = 'end'
-        syncDatabase('/timers')
+        syncDatabase(dbPaths.timers)
 
         interaction.reply({
           content: content,
@@ -130,7 +130,7 @@ export class TimerNotify {
     }
 
     timer.notifData[channel.id] = timing.toISO()
-    syncDatabase('/timers')
+    syncDatabase(dbPaths.timers)
 
     interaction.reply({
       content: content,

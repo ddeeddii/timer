@@ -22,7 +22,7 @@ function disableInteractionButtons(
 export class TimerButtons {
   @ButtonComponent({ id: 'confirm-stopwatch-btn' })
   confirmNewStopwatchButton(btnInteraction: ButtonInteraction): void {
-    const {name, content, interaction, row} = currentTimerData
+    const {name, content, interaction, row, description} = currentTimerData
     disableInteractionButtons(interaction, row, content)
 
     const commandAuthorId = interaction.member?.user.id
@@ -30,7 +30,7 @@ export class TimerButtons {
     // because stopwatch's date is undefined and
     // we need to get when the timer was created
     const rightNowDate = new Date()
-    createNewTimer(name, TimerType.stopwatch, rightNowDate, commandAuthorId as string)
+    createNewTimer(name, TimerType.stopwatch, rightNowDate, commandAuthorId as string, description)
     
     btnInteraction.reply({
       content: `Created a **stopwatch** timer!`,
@@ -51,21 +51,23 @@ export class TimerButtons {
 
   @ButtonComponent({ id: 'confirm-timer-btn' })
   confirmNewTimerButton(btnInteraction: ButtonInteraction): void {
-    const {name, date, content, interaction, row} = currentTimerData
+    const {name, date, content, interaction, row, description} = currentTimerData
     disableInteractionButtons(interaction, row, content)
 
     const commandAuthorId = interaction.member?.user.id
-    createNewTimer(name, TimerType.standard, date, commandAuthorId as string)
+    const channel = interaction.channel
+    const initNotifData = channel == undefined ? {} : {[channel.id]: 'end'}
+    createNewTimer(name, TimerType.standard, date, commandAuthorId as string, description, initNotifData)
 
     btnInteraction.reply({
-      content: `Created date timer '${currentTimerData.name}!'`,
+      content: `Created date timer '**${currentTimerData.name}**'!`,
       ephemeral: true
     })
   }
 
   @ButtonComponent({ id: 'deny-timer-btn' })
   denyNewTimerButton(btnInteraction: ButtonInteraction): void {
-    const {content, interaction, row} = currentTimerData
+    const {content, interaction, row,} = currentTimerData
     disableInteractionButtons(interaction, row, content)
 
     btnInteraction.reply({

@@ -12,6 +12,7 @@ export class TimerCheck {
     })
     @SlashChoice({ name: 'Timer', value: 'timer' })
     @SlashChoice({ name: 'Counter', value: 'counter' })
+    @SlashChoice({ name: 'Custom Notifications', value: 'custom-notif' })
 
     silent: boolean,
     @SlashOption({
@@ -42,7 +43,7 @@ export class TimerCheck {
 
         {
         name: '**__Everyone__**',
-        value: '**start** creates a new Timer. Date arguments are optional; if provided - creates a timer, if empty - creates a stopwatch\n'
+        value: `**start** creates a new Timer. Date arguments are optional; if provided - creates a timer, if empty - creates a stopwatch.\n`
         + '**check** displays information depending on Timer type; stopwatch - elapsed time, timer - end date, % left\n'
         + '**subscribe** you will be pinged when the timer sends out a notification\n'
         + '**list** lists all timers and its data\n'
@@ -53,11 +54,13 @@ export class TimerCheck {
           name: '**__Timer creator__**',
           value: '**reset** resets a Timer or some of its data\n'
           + '**remove** remove a Timer\n'
+          + `**custom-notif** set custom notification text. See /help Custom Notifications for more details.`
         },
 
         {
           name: '**__Moderators__**',
           value: '**notify** periodically send out notifications about timer in selected channel. If the Timer is of type "timer" and no arguments have been provided, the notification will fire when the timer ends\n'
+          + '\nEvery timer automatically sends out a notification in the channel where it was created when it ends\n'
           + '*Moderators also have unrestricted access to modify Timers and can force-subscribe people to Timers*'
         },
     ])
@@ -90,6 +93,42 @@ export class TimerCheck {
           name: '**__Moderators__**',
           value: 'Moderators have unrestricted access to modify Counters'
         },
+    ])
+    } else if(help == 'custom-notif') {
+      embed = new EmbedBuilder()
+      .setTitle('Create Timer')
+      .setFooter({text: 'Made with ❤ by ded'})
+      .addFields([
+        {
+          name: '**__Information__**',
+          value: 'This command is used to create custom notification text.\n'
+          + 'Special parameters can be used to add custom data into the text.\n'
+          + 'At the end of the custom text, the pings will be added.'
+        },
+        {
+          name: '**__Standard parameters__**',
+          value: '**Default timer end text:** `%name is here! %desc 🎉` \n\n'
+          + `**%name** The timer's name\n`
+          + `**%desc** The timer's description\n`
+          + `**%st** Start time of the timer\n`
+          + `**%sd** Start date of the timer\n`
+          + `**%swd** Day of the week of the timer start\n`
+          + '**%et** End time of the timer (*timer only*)\n'
+          + '**%ed** End date of the timer (*timer only*)\n'
+          + '**%ewd** Day of the week of the timer end (*timer only*)\n'
+          + '**%ct** Current time\n'
+          + '**%cd** Current date\n'
+          + '**%cwd** Current day of the week\n'
+
+        },
+        {
+          name: '**__Timer notification only parameters__**',
+          value: '**Default Timer text:** `%tr remaining until %name! (%ewd, %ed, %et). %desc`\n'
+          + '**Default Stopwatch text:** `%te have elapsed since %name. %desc`\n\n'
+          + '**%te** Time elapsed since timer start (e.g 9 hours, 5 minutes, 21 seconds)\n'
+          + '**%tr** Time until timer end (e.g 10 days, 10 hours, 5 minutes, 59 seconds) *timer only*\n'
+
+        }
     ])
     } else { 
       interaction.reply({

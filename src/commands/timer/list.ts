@@ -43,7 +43,7 @@ export class ListTimers {
     }
 
     for (const [timerName, timerData] of Object.entries(TimerList)) {
-      const { type, startDate, endDate, author, subscribers, notifData } = timerData
+      const { type, startDate, endDate, author, subscribers, notifData, description, customText } = timerData
 
       const startDateDT = DateTime.fromJSDate(startDate)
       const startDateString = startDateDT.setLocale('en-ZA').toLocaleString(DateTime.DATETIME_MED)
@@ -69,16 +69,28 @@ export class ListTimers {
       }
 
       const endDateShow = type == TimerType.standard ? `**End Date**: ${endDateString}\n` : ''
+      const descriptionShow = description == '' ? '' : `**Description**: ${description}\n`
+
+      let hasCustomText = true
+      if(customText.end == '' && customText.standard == ''){hasCustomText = false}
+
+      const customNotifShow = hasCustomText == true ? '**Custom Notification Text**:\n' : ''
+      const endCustomNotif = customText.end != '' ? `- **Timer End**: \`${customText.end}\`\n` : ''
+      const standardCustomNotif = customText.standard != '' ? `- **Standard: **: \`${customText.standard}\`\n` : ''
 
       commandEmbed.addFields([
         {
           name: `**__${timerName}__**`,
-          value: `**Type**: ${typeToString[type]}\n`
+          value: `${descriptionShow}`
+          + `**Type**: ${typeToString[type]}\n`
           + `**Start Date**: ${startDateString}\n`
           + `${endDateShow}`
           + `**Author**: <@${author}>\n`
           + `**Subscribers**: ${subscribersFormatted.join(', ')}\n`
-          + `**Notifications**: ${notifDataFormatted.join('')}`
+          + `**Notifications**: ${notifDataFormatted.join('')}\n`
+          + `${customNotifShow}`
+          + `${endCustomNotif}`
+          + `${standardCustomNotif}`
         }
       ])
     }

@@ -47,26 +47,27 @@ async function loadDatabase(){
 }
 
 // Sync tool export
-export async function syncDatabase(dbPath: '/timers' | '/counters'){
+export enum dbPaths {
+  timers = '/timers',
+  counters = '/counters',
+  timezones = '/timezones'
+}
+const dbPathToVar = {
+  [dbPaths.timers]: TimerList,
+  [dbPaths.counters]: TimerList,
+  [dbPaths.timezones]: undefined,
+}
+
+export async function syncDatabase(dbPath: dbPaths){
   console.log(chalk.redBright('\nAttempting to sync database...'))
 
-  let dbVar
-  if(dbPath == '/timers'){
-    dbVar = TimerList
-  } else if(dbPath == '/counters'){
-    dbVar = CounterList
-  } else {
-    console.log(chalk.redBright(`SYNCHRONISATION ERROR: WRONG DBPATH ${dbPath}`))
-    return
-  }
-  
-  await db.push('/data' + dbPath, dbVar, true)
+  await db.push('/data' + dbPath, dbPathToVar[dbPath], true)
 
   console.log(chalk.greenBright('\nSynchronised database!'))
 }
 
 // Main exports
-export function createNewTimer(name: string, type: TimerType, date: Date, creator: string) {
+export function createNewTimer(name: string, type: TimerType, date: Date, creator: string, description = '', notifData = {}) {
   const rightNow = new Date()
   rightNow.setMilliseconds(0)
   rightNow.setSeconds(0)
@@ -78,11 +79,16 @@ export function createNewTimer(name: string, type: TimerType, date: Date, creato
     lastNotifDate: rightNow,
     author: creator,
     subscribers: [creator],
-    notifData: {},
+    description: description,
+    notifData: notifData,
+    customText: {
+      'end': '',
+      'standard': ''
+    }
   }
 
   TimerList[name] = timer
-  syncDatabase('/timers')
+  syncDatabase(dbPaths.timers)
 }
 
 export function createNewCounter(name: string, creator: string) {
@@ -92,5 +98,5 @@ export function createNewCounter(name: string, creator: string) {
   }
 
   CounterList[name] = counter
-  syncDatabase('/counters')
+  syncDatabase(dbPaths.counters)
 }

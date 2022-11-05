@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, PermissionFlagsBits, User } from 'discord.js'
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
-import { syncDatabase, TimerList } from '../../lib/dbHandler.js'
+import { dbPaths, syncDatabase, TimerList } from '../../lib/dbHandler.js'
 import { getAutocomplete } from '../../lib/common/miscUtils.js'
 
 @Discord()
@@ -76,7 +76,7 @@ export class TimerSubscribe {
 
     if(timer.subscribers.includes(user.id)){
       timer.subscribers.splice(timer.subscribers.indexOf(user.id), 1)
-      syncDatabase('/timers')
+      syncDatabase(dbPaths.timers)
   
       interaction.reply({
         content: replyUnsub,
@@ -86,7 +86,7 @@ export class TimerSubscribe {
     }
 
     timer.subscribers.push(user.id)
-    syncDatabase('/timers')
+    syncDatabase(dbPaths.timers)
 
     interaction.reply({
       content: replySub,

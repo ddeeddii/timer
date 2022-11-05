@@ -8,7 +8,8 @@ export const currentTimerData = {
   date: new Date(),
   content: '',
   interaction: undefined as unknown as CommandInteraction,
-  row: undefined as unknown as ActionRowBuilder<MessageActionRowComponentBuilder>
+  row: undefined as unknown as ActionRowBuilder<MessageActionRowComponentBuilder>,
+  description: ''
 }
 
 
@@ -19,6 +20,7 @@ export class TimerStart {
   @SlashGroup('timer')
   async start(
     @SlashOption({ description: 'Timer name', name: 'name', type: ApplicationCommandOptionType.String }) name: string,
+    @SlashOption({ description: 'Additional text', name: 'description', required: false, type: ApplicationCommandOptionType.String }) description: string,
     @SlashOption({ description: 'Ending year', name: 'year', required: false, type: ApplicationCommandOptionType.Number }) year: number,
     @SlashOption({ description: 'Ending month', name: 'month', required: false, type: ApplicationCommandOptionType.Number }) month: number,
     @SlashOption({ description: 'Ending day', name: 'day', required: false, type: ApplicationCommandOptionType.Number }) day: number,
@@ -50,15 +52,20 @@ export class TimerStart {
       return
     }
 
+    if(description == undefined){
+      description = ''
+    }
+
     currentTimerData.name = name
     currentTimerData.date = date
     currentTimerData.interaction = interaction
+    currentTimerData.description = description
 
     if(dateSimple === 'Invalid Date'){
-      createStopwatch(interaction)
+      createStopwatch(interaction, name, description)
       return
     }
 
-    createTimer(name, interaction, date)
+    createTimer(name, interaction, date, description)
   }
 }

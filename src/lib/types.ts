@@ -12,6 +12,11 @@ export interface TimerListInterface {
   [name: string]: TimerData
 }
 
+export interface customTextInterface {
+  'end': string,
+  'standard': string
+}
+
 export interface TimerData{
   type: TimerType,
   startDate: Date,
@@ -19,6 +24,8 @@ export interface TimerData{
   lastNotifDate: Date,
   author: string,
   subscribers: Array<string>,
+  description: string,
+  customText: customTextInterface,
   notifData: {
     [channel: string]: string
   }
@@ -31,4 +38,10 @@ export interface CounterListInterface {
 interface CounterData {
   author: string,
   value: number,
+}
+
+export enum dbPath {
+  timers = '/timers',
+  counters = '/counters',
+  timezones = '/timezones'
 }

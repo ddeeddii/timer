@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, PermissionFlagsBits } from 'discord.js'
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
-import { syncDatabase, TimerList } from '../../lib/dbHandler.js'
+import { dbPaths, syncDatabase, TimerList } from '../../lib/dbHandler.js'
 import { getAutocomplete } from '../../lib/common/miscUtils.js'
 
 @Discord()
@@ -57,7 +57,7 @@ export class TimerRemove {
 
     delete TimerList[searchTimerName]
 
-    syncDatabase('/timers')
+    syncDatabase(dbPaths.timers)
     interaction.reply({
       content: `Removed timer '${searchTimerName}'.`,
       ephemeral: silent

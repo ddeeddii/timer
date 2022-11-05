@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, PermissionFlagsBits } from 'discord.js'
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
 import { getAutocomplete } from '../../lib/common/miscUtils.js'
-import { CounterList, syncDatabase } from '../../lib/dbHandler.js'
+import { CounterList, dbPaths, syncDatabase } from '../../lib/dbHandler.js'
 
 @Discord()
 @SlashGroup({ name: 'counter' })
@@ -56,7 +56,7 @@ export class RemoveCounter {
     }
 
     delete CounterList[searchCounterName]
-    syncDatabase('/counters')
+    syncDatabase(dbPaths.counters)
 
     interaction.reply({
       content: `Removed counter '${searchCounterName}'.`,
