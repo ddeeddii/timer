@@ -54,7 +54,7 @@ export enum dbPaths {
 }
 const dbPathToVar = {
   [dbPaths.timers]: TimerList,
-  [dbPaths.counters]: TimerList,
+  [dbPaths.counters]: CounterList,
   [dbPaths.timezones]: undefined,
 }
 
