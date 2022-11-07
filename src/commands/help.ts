@@ -9,10 +9,12 @@ export class TimerCheck {
     @SlashOption({
       name: 'option',
       description: 'Which element of the bot do you need help with',
+      required: true,
       type: ApplicationCommandOptionType.String,
     })
     @SlashChoice({ name: 'Timer', value: 'timer' })
     @SlashChoice({ name: 'Counter', value: 'counter' })
+    @SlashChoice({ name: 'Timezone', value: 'timezone' })
     @SlashChoice({ name: 'Custom Notifications', value: 'custom-notif' })
 
     silent: boolean,
@@ -130,7 +132,29 @@ export class TimerCheck {
           + '**%tr** Time until timer end (e.g 10 days, 10 hours, 5 minutes, 59 seconds) *timer only*\n'
 
         }
-    ])
+      ])
+    } else if(help == 'timezone'){
+      embed = new EmbedBuilder()
+      .setTitle('Timezone Commands')
+      .setFooter({text: 'Made with ❤ by ded'})
+      .addFields([
+        {
+          name: '**__Information__**',
+          value: 'This command is used to create custom notification text.\n'
+          + 'Special parameters can be used to add custom data into the text.\n'
+          + 'At the end of the custom text, the pings will be added.'
+        },
+        {
+          name: '**__Everyone__**',
+          value: '**set** Set your timezone, in compliance with IANA timezones. Simply fill "timezone" out with your country\'s capital\n'
+          + `**list** Displays the current time of everyone who has set a timezone\n`
+          + `**check** Displays the current time of a particular user or time in a particular time zone`
+        },
+        {
+          name: '**__Moderators__**',
+          value: 'Moderators with "Kick user" permissions can set other people\'s timezones'
+        },
+      ])
     } else { 
       interaction.reply({
         content: '⛔ Invalid argument!',

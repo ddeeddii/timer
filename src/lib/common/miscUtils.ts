@@ -17,3 +17,35 @@ export function getAutocomplete(searchedString: string, object: TimerListInterfa
 
   return formattedNames
 }
+
+// Temporary fix for Intl.supportedValuesOf not being in typescript
+// Read https://github.com/microsoft/TypeScript/issues/49231
+// eslint-disable-next-line @typescript-eslint/no-namespace
+declare namespace Intl {
+  type Key = 'calendar' | 'collation' | 'currency' | 'numberingSystem' | 'timeZone' | 'unit';
+
+  function supportedValuesOf(input: Key): string[];
+}
+
+export const supportedTimezones = Intl.supportedValuesOf('timeZone')
+
+export function getTimezoneAutocomplete(searchedString: string){
+  const allTimezones = Intl.supportedValuesOf('timeZone')
+
+  let filteredTimezones
+  if(searchedString == ''){
+    filteredTimezones = allTimezones
+  } else {
+    filteredTimezones = allTimezones.filter(
+      // .toLowerCase() makes it case insensitive
+      name => name.toLowerCase().includes(searchedString.toLowerCase())
+    )
+  }
+
+  const formattedTimezones: Array<ApplicationCommandOptionChoiceData> = []
+  filteredTimezones.forEach((name) => {
+    formattedTimezones.push({name: name, value: name})
+  })
+
+  return formattedTimezones.slice(0, 5)
+}

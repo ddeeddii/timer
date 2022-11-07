@@ -1,14 +1,16 @@
-import { CounterListInterface, GlobalDataInterface, TimerListInterface, TimerType } from './types'
+import { CounterListInterface, GlobalDataInterface, TimerListInterface, TimerType, TimezoneListInterface } from './types'
 import chalk from 'chalk'
 
 // Empty
 const GlobalData: GlobalDataInterface = {
   timers: {},
-  counters: {}
+  counters: {},
+  timezones: {},
 }
 
 export const TimerList: TimerListInterface = {}
 export const CounterList: CounterListInterface = {}
+export const TimezoneList: TimezoneListInterface = {}
 
 // Setup database
 import { JsonDB, Config } from 'node-json-db'
@@ -55,7 +57,7 @@ export enum dbPaths {
 const dbPathToVar = {
   [dbPaths.timers]: TimerList,
   [dbPaths.counters]: CounterList,
-  [dbPaths.timezones]: undefined,
+  [dbPaths.timezones]: TimezoneList,
 }
 
 export async function syncDatabase(dbPath: dbPaths){
@@ -99,4 +101,9 @@ export function createNewCounter(name: string, creator: string) {
 
   CounterList[name] = counter
   syncDatabase(dbPaths.counters)
+}
+
+export function addUserTimezone(userId: string, timezone: string) {
+  TimezoneList[userId] = timezone
+  syncDatabase(dbPaths.timezones)
 }

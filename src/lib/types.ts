@@ -6,6 +6,7 @@ export enum TimerType {
 export interface GlobalDataInterface {
   timers: TimerListInterface
   counters: CounterListInterface
+  timezones: TimezoneListInterface
 }
 
 export interface TimerListInterface {
@@ -44,4 +45,8 @@ export enum dbPath {
   timers = '/timers',
   counters = '/counters',
   timezones = '/timezones'
+}
+
+export interface TimezoneListInterface {
+  [user: string]: string
 }
