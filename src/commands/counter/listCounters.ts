@@ -3,7 +3,7 @@ import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
 import { CounterList } from '../../lib/dbHandler.js'
 
 @Discord()
-@SlashGroup({ name: 'counter' })
+@SlashGroup({ name: 'counter', description: 'Counter' })
 export class ListCounters {
   @Slash({ description: 'List all counters' })
   @SlashGroup('counter')

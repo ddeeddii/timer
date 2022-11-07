@@ -10,7 +10,8 @@ enum notificationType {
 }
 
 @Discord()
-@SlashGroup({ name: 'timer' })
+@SlashGroup({ name: 'timer', description: 'Timer'})
+
 export class CustomNotify {
   @Slash({ name:'custom-notify', description: 'Set custom notification text'})
   @SlashGroup('timer')
@@ -22,9 +23,10 @@ export class CustomNotify {
 
         interaction.respond(autocompleteData)
       },
-      name: 'timer-name',
-      type: ApplicationCommandOptionType.String,
 
+      name: 'timer-name',
+      description: 'Name of the timer',
+      type: ApplicationCommandOptionType.String,
     })
   
     @SlashOption({
@@ -37,6 +39,7 @@ export class CustomNotify {
     type: 'end' | 'standard',
     @SlashOption({
       name: 'notification-type',
+      description: 'Type of the notification',
       type: ApplicationCommandOptionType.String,
     })
     @SlashChoice({ name: 'On timer end', value: 'end' })

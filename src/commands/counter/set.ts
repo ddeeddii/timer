@@ -4,7 +4,7 @@ import { getAutocomplete } from '../../lib/common/miscUtils.js'
 import { CounterList, dbPaths, syncDatabase } from '../../lib/dbHandler.js'
 
 @Discord()
-@SlashGroup({ name: 'counter' })
+@SlashGroup({ name: 'counter', description: 'Counter', })
 export class SetCounter {
   @Slash({ description: 'Add to counter' })
   @SlashGroup('counter')
@@ -16,11 +16,12 @@ export class SetCounter {
 
         interaction.respond(autocompleteData)
       },
+
       name: 'counter-name',
+      description: 'Name of the counter',
       type: ApplicationCommandOptionType.String,
-
     })
-
+    
     @SlashOption({ 
       description: 'Value the counter will be set to',
       name: 'value',

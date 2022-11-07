@@ -7,7 +7,8 @@ import { toHuman } from '../../lib/common/dateUtils.js'
 import { TimerType } from '../../lib/types.js'
 
 @Discord()
-@SlashGroup({ name: 'timer' })
+@SlashGroup({ name: 'timer', description: 'Timer'})
+
 export class TimerNotify {
   @Slash({ name:'notify', description: 'Set periodic notifications to a channel' })
   @SlashGroup('timer')
@@ -19,9 +20,10 @@ export class TimerNotify {
 
         interaction.respond(autocompleteData)
       },
-      name: 'timer-name',
-      type: ApplicationCommandOptionType.String,
 
+      name: 'timer-name',
+      description: 'Name of the timer',
+      type: ApplicationCommandOptionType.String,
     })
   
     @SlashOption({

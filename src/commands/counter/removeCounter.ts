@@ -4,7 +4,7 @@ import { getAutocomplete } from '../../lib/common/miscUtils.js'
 import { CounterList, dbPaths, syncDatabase } from '../../lib/dbHandler.js'
 
 @Discord()
-@SlashGroup({ name: 'counter' })
+@SlashGroup({ name: 'counter', description: 'Counter', })
 export class RemoveCounter {
   @Slash({ description: 'Remove a counter' })
   @SlashGroup('counter')
@@ -16,7 +16,9 @@ export class RemoveCounter {
 
         interaction.respond(autocompleteData)
       },
+
       name: 'counter-name',
+      description: 'Name of the counter',
       type: ApplicationCommandOptionType.String,
     })
 

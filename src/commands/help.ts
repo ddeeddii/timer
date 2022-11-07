@@ -8,6 +8,7 @@ export class TimerCheck {
     help: string,
     @SlashOption({
       name: 'option',
+      description: 'Which element of the bot do you need help with',
       type: ApplicationCommandOptionType.String,
     })
     @SlashChoice({ name: 'Timer', value: 'timer' })

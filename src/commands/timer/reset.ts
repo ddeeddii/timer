@@ -5,7 +5,8 @@ import { getAutocomplete } from '../../lib/common/miscUtils.js'
 import { DateTime } from 'luxon'
 
 @Discord()
-@SlashGroup({ name: 'timer' })
+@SlashGroup({ name: 'timer', description: 'Timer'})
+
 export class TimerSubscribe {
   @Slash({ name: 'reset', description: 'Reset a timer or its data' })
   @SlashGroup('timer')
@@ -17,14 +18,16 @@ export class TimerSubscribe {
 
         interaction.respond(autocompleteData)
       },
-      name: 'timer-name',
-      type: ApplicationCommandOptionType.String,
 
+      name: 'timer-name',
+      description: 'Name of the timer',
+      type: ApplicationCommandOptionType.String,
     })
 
     option: string,
     @SlashOption({
       name: 'option',
+      description: 'What property of the timer should be reset',
       type: ApplicationCommandOptionType.String,
     })
     @SlashChoice({ name: 'Start date', value: 'start date' })

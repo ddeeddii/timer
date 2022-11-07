@@ -7,7 +7,7 @@ import { TimerList } from '../../lib/dbHandler.js'
 import { TimerType } from '../../lib/types.js'
 
 @Discord()
-@SlashGroup({ name: 'timer' })
+@SlashGroup({ name: 'timer', description: 'Timer'})
 export class TimerCheck {
   @Slash({ name: 'check', description: 'Check when a timer ends or how much time has elapsed' })
   @SlashGroup('timer')
@@ -19,7 +19,9 @@ export class TimerCheck {
 
         interaction.respond(autocompleteData)
       },
+
       name: 'timer-name',
+      description: 'Name of the timer',
       type: ApplicationCommandOptionType.String,
     })
 

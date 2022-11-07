@@ -4,7 +4,8 @@ import { dbPaths, syncDatabase, TimerList } from '../../lib/dbHandler.js'
 import { getAutocomplete } from '../../lib/common/miscUtils.js'
 
 @Discord()
-@SlashGroup({ name: 'timer' })
+@SlashGroup({ name: 'timer', description: 'Timer'})
+
 export class TimerRemove {
   @Slash({ name: 'remove', description: 'Delete a timer' })
   @SlashGroup('timer')
@@ -16,9 +17,10 @@ export class TimerRemove {
 
         interaction.respond(autocompleteData)
       },
-      name: 'timer-name',
-      type: ApplicationCommandOptionType.String,
 
+      name: 'timer-name',
+      description: 'Name of the timer',
+      type: ApplicationCommandOptionType.String,
     })
 
     @SlashOption({

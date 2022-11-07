@@ -11,7 +11,8 @@ const typeToString = {
 }
 
 @Discord()
-@SlashGroup({ name: 'timer' })
+@SlashGroup({ name: 'timer', description: 'Timer'})
+
 export class ListTimers {
   @Slash({ name: 'list', description: 'Display all timers and their data' })
   @SlashGroup('timer')

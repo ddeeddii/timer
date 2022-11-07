@@ -14,7 +14,8 @@ export const currentTimerData = {
 
 
 @Discord()
-@SlashGroup({ name: 'timer' })
+@SlashGroup({ name: 'timer', description: 'Timer'})
+
 export class TimerStart {
   @Slash({ description: 'Create a new timer' })
   @SlashGroup('timer')
