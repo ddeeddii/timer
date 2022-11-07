@@ -139,12 +139,6 @@ export class TimerCheck {
       .setFooter({text: 'Made with ❤ by ded'})
       .addFields([
         {
-          name: '**__Information__**',
-          value: 'This command is used to create custom notification text.\n'
-          + 'Special parameters can be used to add custom data into the text.\n'
-          + 'At the end of the custom text, the pings will be added.'
-        },
-        {
           name: '**__Everyone__**',
           value: '**set** Set your timezone, in compliance with IANA timezones. Simply fill "timezone" out with your country\'s capital\n'
           + `**list** Displays the current time of everyone who has set a timezone\n`
