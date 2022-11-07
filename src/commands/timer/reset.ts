@@ -21,6 +21,7 @@ export class TimerSubscribe {
 
       name: 'timer-name',
       description: 'Name of the timer',
+      required: true,
       type: ApplicationCommandOptionType.String,
     })
 
@@ -28,6 +29,7 @@ export class TimerSubscribe {
     @SlashOption({
       name: 'option',
       description: 'What property of the timer should be reset',
+      required: true,
       type: ApplicationCommandOptionType.String,
     })
     @SlashChoice({ name: 'Start date', value: 'start date' })

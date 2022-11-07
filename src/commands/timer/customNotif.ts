@@ -11,12 +11,10 @@ enum notificationType {
 
 @Discord()
 @SlashGroup({ name: 'timer', description: 'Timer'})
-
 export class CustomNotify {
   @Slash({ name:'custom-notify', description: 'Set custom notification text'})
   @SlashGroup('timer')
   async notify(
-    searchTimerName: string,
     @SlashOption({
       autocomplete: (interaction: AutocompleteInteraction) => {
         const autocompleteData = getAutocomplete(interaction.options.getFocused(), TimerList)
@@ -27,24 +25,26 @@ export class CustomNotify {
       name: 'timer-name',
       description: 'Name of the timer',
       type: ApplicationCommandOptionType.String,
-    })
-  
-    @SlashOption({
-      type: ApplicationCommandOptionType.String,
-      description: 'Custom text',
-      name: 'text',
-      required: true })
-    text: string,
-    
+      required: true,
+    }) searchTimerName: string,
+
     type: 'end' | 'standard',
     @SlashOption({
       name: 'notification-type',
       description: 'Type of the notification',
       type: ApplicationCommandOptionType.String,
+      required: true,
     })
     @SlashChoice({ name: 'On timer end', value: 'end' })
     @SlashChoice({ name: 'Standard notification', value: 'standard' })
 
+    @SlashOption({
+      name: 'text',
+      description: 'Custom text',
+      required: true,
+      type: ApplicationCommandOptionType.String
+    }) text: string,
+    
     @SlashOption({
       name: 'silent',
       description: 'Should the command be only visible by you? (default: true)',
@@ -107,11 +107,11 @@ export class CustomNotify {
       }
     }
 
-    timer.customText[type] = text
+    timer.customText[type as 'end' | 'standard'] = text
     syncDatabase(dbPaths.timers)
 
     interaction.reply({
-      content: `Set **${searchTimerName}**'s notification text to \`${text}\``,
+      content: `Set **${searchTimerName}**'s notification text to`,
       ephemeral: silent,
     })
   }

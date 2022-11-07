@@ -28,7 +28,8 @@ export class TimerRemove {
       description: 'Should the command be only visible by you? (default: true)',
       required: false,
       type: ApplicationCommandOptionType.Boolean
-    }) silent: boolean,
+    })
+    silent: boolean,
 
     interaction: CommandInteraction
   ): Promise<void> {

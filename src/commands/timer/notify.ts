@@ -23,6 +23,7 @@ export class TimerNotify {
 
       name: 'timer-name',
       description: 'Name of the timer',
+      required: true,
       type: ApplicationCommandOptionType.String,
     })
   
@@ -31,7 +32,8 @@ export class TimerNotify {
       channelTypes: [ChannelType.GuildText, ChannelType.GuildNews],
       description: 'Channel where the notifications will be sent',
       name: 'channel',
-      required: true })
+      required: true 
+    })
     channel: Channel,
 
     @SlashOption({

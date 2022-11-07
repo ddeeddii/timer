@@ -22,6 +22,7 @@ export class TimerCheck {
 
       name: 'timer-name',
       description: 'Name of the timer',
+      required: true,
       type: ApplicationCommandOptionType.String,
     })
 
