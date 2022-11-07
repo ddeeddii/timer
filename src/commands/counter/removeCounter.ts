@@ -19,6 +19,7 @@ export class RemoveCounter {
 
       name: 'counter-name',
       description: 'Name of the counter',
+      required: true,
       type: ApplicationCommandOptionType.String,
     })
 

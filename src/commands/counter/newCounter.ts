@@ -11,6 +11,7 @@ export class NewCounter {
   @SlashOption({ 
       description: 'Counter name',
       name: 'name',
+      required: true,
       type: ApplicationCommandOptionType.String 
     })
     name: string,

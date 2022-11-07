@@ -19,12 +19,14 @@ export class AddCounter {
 
       name: 'counter-name',
       description: 'Name of the counter',
+      required: true,
       type: ApplicationCommandOptionType.String,
     })
 
     @SlashOption({ 
       description: 'Value that will be added to the counter',
       name: 'value',
+      required: true,
       type: ApplicationCommandOptionType.Number 
     })
     value: number,
