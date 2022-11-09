@@ -45,6 +45,10 @@ async function loadDatabase(){
     CounterList[name] = counterData
   }
 
+  for (const [userId, userTimezone] of Object.entries(data.timezones)) {
+    TimezoneList[userId] = userTimezone
+  }
+
   console.log(chalk.greenBright('Loaded database!'))
 }
 
