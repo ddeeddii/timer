@@ -1,4 +1,6 @@
 import { ApplicationCommandOptionChoiceData } from 'discord.js'
+import { DateTime } from 'luxon'
+import { TimezoneList } from '../dbHandler.js'
 import { CounterListInterface, TimerListInterface } from '../types.js'
 
 export function getAutocomplete(searchedString: string, object: TimerListInterface | CounterListInterface): Array<ApplicationCommandOptionChoiceData> {
@@ -48,4 +50,30 @@ export function getTimezoneAutocomplete(searchedString: string){
   })
 
   return formattedTimezones.slice(0, 5)
+}
+
+export interface timezoneObj {
+  [offset: string]: {
+    timezone: string,
+    users: Array<string>
+  }
+}
+
+export function parseTimezonesByOffset(): timezoneObj{
+  const timezoneObj: timezoneObj = {}
+
+  for (const [userId, timezone] of Object.entries(TimezoneList)) {
+    const offset = DateTime.now().setZone(timezone).offset
+
+    if(offset in timezoneObj){
+      timezoneObj[offset].users.push(userId)
+    } else {
+      timezoneObj[offset] = {
+        timezone: timezone,
+        users: [userId]
+      }
+    }
+  }
+
+  return timezoneObj
 }
