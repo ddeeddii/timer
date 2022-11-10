@@ -26,7 +26,7 @@ export class ListTimezones {
       description: `Format: 'yyyy/mm/dd hh:mm' (e.g. 2020/04/01 20:21)`,
       required: false,
       type: ApplicationCommandOptionType.String
-    }) time: string,
+    }) timeArg: string,
 
     @SlashOption({
       name: 'silent',
@@ -41,8 +41,8 @@ export class ListTimezones {
     }
 
     let defaultDate = DateTime.now()
-    if(time != undefined){
-      const dateDT = DateTime.fromFormat(time, 'yyyy/mm/dd hh:mm')
+    if(timeArg != undefined){
+      const dateDT = DateTime.fromFormat(timeArg, 'yyyy/mm/dd hh:mm')
 
       if(dateDT.isValid){
         defaultDate = dateDT
