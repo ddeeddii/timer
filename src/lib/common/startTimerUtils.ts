@@ -1,6 +1,6 @@
 import { CommandInteraction, ButtonBuilder, ButtonStyle, ActionRowBuilder, MessageActionRowComponentBuilder } from 'discord.js'
 import { DateTime } from 'luxon'
-import { currentTimerData } from '../../commands/timer/start.js'
+import { currentTimerData } from '../../commands/timer/startTimer.js'
 import { getDiscordTimestamp } from './miscUtils.js'
 
 export async function createStopwatch(interaction: CommandInteraction, name: string, description: string){

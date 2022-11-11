@@ -3,7 +3,7 @@ import { ButtonComponent, Discord } from 'discordx'
 import { DateTime } from 'luxon'
 import { createNewTimer, TimezoneList } from '../../lib/dbHandler.js'
 import { TimerType } from '../../lib/types.js'
-import { currentTimerData } from './start.js'
+import { currentTimerData } from './startTimer.js'
 
 function disableInteractionButtons(
   interaction: CommandInteraction,
