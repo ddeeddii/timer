@@ -20,6 +20,7 @@ export class TimerRemove {
 
       name: 'timer-name',
       description: 'Name of the timer',
+      required: true,
       type: ApplicationCommandOptionType.String,
     })
 
