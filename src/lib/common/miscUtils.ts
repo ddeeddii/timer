@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import { TimezoneList } from '../dbHandler.js'
 import { CounterListInterface, TimerListInterface } from '../types.js'
 
-export function getAutocomplete(searchedString: string, object: TimerListInterface | CounterListInterface): Array<ApplicationCommandOptionChoiceData> {
+export function getAutocomplete(searchedString: string, object: TimerListInterface | CounterListInterface, max = 10): Array<ApplicationCommandOptionChoiceData> {
   const allNames = Object.keys(object)
   const formattedNames: Array<ApplicationCommandOptionChoiceData> = []
 
@@ -13,7 +13,14 @@ export function getAutocomplete(searchedString: string, object: TimerListInterfa
   } else {
     filteredNames = allNames.filter(name => name.includes(searchedString))
   }
+
+  let idx = 0
   filteredNames.forEach((name) => {
+    idx++
+    if(idx > max){
+      return
+    }
+
     formattedNames.push({name: name, value: name})
   })
 
