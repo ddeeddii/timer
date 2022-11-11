@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, Channel, ChannelType, CommandInteraction, PermissionFlagsBits } from 'discord.js'
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
 import { dbPaths, syncDatabase, TimerList } from '../../lib/dbHandler.js'
-import { getAutocomplete } from '../../lib/common/miscUtils.js'
+import { getAutocomplete, getDiscordTimestamp } from '../../lib/common/miscUtils.js'
 import { DateTime, Duration } from 'luxon'
 import { toHuman } from '../../lib/common/dateUtils.js'
 import { TimerType } from '../../lib/types.js'
@@ -124,13 +124,13 @@ export class TimerNotify {
 
     const timing = Duration.fromObject({days: days, hours: hours, minutes: minutes})
 
-    const nextNotification = DateTime.fromJSDate(new Date).plus(timing).setLocale('en-ZA').toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)
+    const nextNotification = DateTime.now().plus(timing)
     const channelsWithNotifications = Object.keys(timer.notifData)
     
     if(channelsWithNotifications.includes(channel.id)){
-      content = `Overwritten ${searchTimerName}'s notifications in ${channel.toString()}. They will now trigger every ${toHuman(timing)} (next time on ${nextNotification})`
+      content = `Overwritten ${searchTimerName}'s notifications in ${channel.toString()}. They will now trigger every ${toHuman(timing)} (next time on ${getDiscordTimestamp(nextNotification)})`
     } else {
-      content = `Added notification to ${channel.toString()} that will trigger every ${toHuman(timing)} (next time on ${nextNotification})`
+      content = `Added notification to ${channel.toString()} that will trigger every ${toHuman(timing)} (next time on ${getDiscordTimestamp(nextNotification)})`
     }
 
     timer.notifData[channel.id] = timing.toISO()

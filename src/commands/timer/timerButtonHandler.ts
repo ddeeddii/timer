@@ -1,6 +1,7 @@
 import { ActionRowBuilder, ButtonInteraction, CommandInteraction, MessageActionRowComponentBuilder } from 'discord.js'
 import { ButtonComponent, Discord } from 'discordx'
-import { createNewTimer } from '../../lib/dbHandler.js'
+import { DateTime } from 'luxon'
+import { createNewTimer, TimezoneList } from '../../lib/dbHandler.js'
 import { TimerType } from '../../lib/types.js'
 import { currentTimerData } from './startTimer.js'
 
@@ -29,7 +30,8 @@ export class TimerButtons {
 
     // because stopwatch's date is undefined and
     // we need to get when the timer was created
-    const rightNowDate = new Date()
+    const timezone = TimezoneList[commandAuthorId as string]
+    const rightNowDate = DateTime.now().setZone(timezone)
     createNewTimer(name, TimerType.stopwatch, rightNowDate, commandAuthorId as string, description)
     
     btnInteraction.reply({

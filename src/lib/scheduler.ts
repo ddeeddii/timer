@@ -6,6 +6,7 @@ import { bot } from '../main.js'
 import { DateTime, Duration } from 'luxon'
 import { BaseGuildTextChannel } from 'discord.js'
 import { getTimeDifference } from './common/dateUtils.js'
+import { getDiscordTimestamp } from './common/miscUtils.js'
 
 function getNotificationString(membersToNotify: Array<string>){
   const pings = membersToNotify.map(member => '<@' + member + '>')
@@ -17,9 +18,9 @@ interface paramMap {
 }
 
 function completeCustomNotification(name: string, timerData: TimerData, type: 'end' | 'standard'){
-  const startDate = DateTime.fromJSDate(timerData.startDate).setLocale('en-ZA')
-  const endDate = DateTime.fromJSDate(timerData.endDate).setLocale('en-ZA')
-  const currentDate = DateTime.fromJSDate(new Date()).setLocale('en-ZA')
+  const startDate = timerData.startDate.setLocale('en-ZA')
+  const endDate = timerData.endDate.setLocale('en-ZA')
+  const currentDate = DateTime.now().setLocale('en-ZA')
 
   const paramMap: paramMap = {
     '%name': name,
@@ -33,8 +34,8 @@ function completeCustomNotification(name: string, timerData: TimerData, type: 'e
     '%ct': currentDate.toLocaleString(DateTime.TIME_24_SIMPLE),
     '%cd': currentDate.toLocaleString(DateTime.DATE_MED),
     '%cwd': currentDate.weekdayShort,
-    '%te': getTimeDifference(timerData.startDate, new Date()),
-    '%tr': getTimeDifference(new Date(), timerData.endDate),
+    '%te': getTimeDifference(timerData.startDate, DateTime.now()),
+    '%tr': getTimeDifference(DateTime.now(), timerData.endDate),
   }
   
   const re = new RegExp(Object.keys(paramMap).join('|'), 'gi')
@@ -57,13 +58,13 @@ function checkTimers(){
 }
 
 function handleTimer(name: string, timerData: TimerData){
-  const currentTime = new Date()
+  const currentTime = DateTime.now()
   for (const [channelId, durationISO] of Object.entries(timerData.notifData)) {
     const channel = bot.channels.cache.get(channelId) as BaseGuildTextChannel
     const notification = getNotificationString(timerData.subscribers)
 
     if(durationISO == 'end'){
-      if(currentTime.getTime() >= timerData.endDate.getTime()){
+      if(currentTime.toMillis() >= timerData.endDate.toMillis()){
         if(timerData.customText.end != ''){
           const customText = completeCustomNotification(name, timerData, 'end')
           channel.send(customText + ` ${notification}`)
@@ -79,23 +80,15 @@ function handleTimer(name: string, timerData: TimerData){
     }
 
     const duration = Duration.fromISO(durationISO)
-    const nextNotification = timerData.lastNotifDate.getTime() + duration.toMillis()
-    if(currentTime.getTime() >= nextNotification){
+    const nextNotification = timerData.lastNotifDate.toMillis() + duration.toMillis()
+    if(currentTime.toMillis() >= nextNotification){
       if(timerData.customText.standard != ''){
         const customText = completeCustomNotification(name, timerData, 'standard')
         channel.send(customText + ` ${notification}`)
       } else {
-        const timerDT = DateTime.fromJSDate(timerData.endDate)
-        const timeString = timerDT.setLocale('en-ZA').toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)
-        const timeDiff = getTimeDifference(new Date(), timerData.endDate)
-      
-        // const rightNowDate = new Date()
-        // const percentOne = timerData.endDate.getTime() - rightNowDate.getTime()
-        // const percentTwo = timerData.endDate.getTime() - timerData.startDate.getTime()
-        // const rawPercent = percentOne / percentTwo
-        // const timePercentDiff = Math.round(rawPercent * 1000) / 10 
+        const timeDiff = getTimeDifference(DateTime.now(), timerData.endDate)
     
-        channel.send(`${timeDiff} remaining until **${name}**! (${timeString}). ${timerData.description} ${notification}`)
+        channel.send(`${timeDiff} remaining until **${name}**! (${getDiscordTimestamp(timerData.endDate)}). ${timerData.description} ${notification}`)
       }
     }
   }
@@ -103,13 +96,13 @@ function handleTimer(name: string, timerData: TimerData){
 }
 
 function handleStopwatch(name: string, timerData: TimerData){
-  const currentTime = new Date()
+  const currentTime = DateTime.now()
 
   for (const [channelId, durationISO] of Object.entries(timerData.notifData)) {
     const duration = Duration.fromISO(durationISO)
-    const nextNotification = timerData.lastNotifDate.getTime() + duration.toMillis()
+    const nextNotification = timerData.lastNotifDate.toMillis() + duration.toMillis()
     
-    if(currentTime.getTime() > nextNotification){
+    if(currentTime.toMillis() > nextNotification){
       const channel = bot.channels.cache.get(channelId) as BaseGuildTextChannel
       if(channel?.isTextBased() == false){
         return
@@ -120,7 +113,7 @@ function handleStopwatch(name: string, timerData: TimerData){
         const customText = completeCustomNotification(name, timerData, 'standard')
         channel.send(customText + ` ${notification}`)
       } else {
-        const timeDiff = getTimeDifference(timerData.startDate, new Date())
+        const timeDiff = getTimeDifference(timerData.startDate, DateTime.now())
   
         channel.send(`${timeDiff} have elapsed since **${name}**! ${timerData.description} ${notification}`)
       }

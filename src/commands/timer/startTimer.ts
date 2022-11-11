@@ -1,11 +1,12 @@
 import { ActionRowBuilder, ApplicationCommandOptionType, CommandInteraction, MessageActionRowComponentBuilder } from 'discord.js'
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
+import { DateTime } from 'luxon'
 import { createStopwatch, createTimer } from '../../lib/common/startTimerUtils.js'
-import { TimerList } from '../../lib/dbHandler.js'
+import { TimerList, TimezoneList } from '../../lib/dbHandler.js'
 
 export const currentTimerData = {
   name: '',
-  date: new Date(),
+  date: DateTime.now(),
   content: '',
   interaction: undefined as unknown as CommandInteraction,
   row: undefined as unknown as ActionRowBuilder<MessageActionRowComponentBuilder>,
@@ -40,18 +41,16 @@ export class TimerStart {
       return
     }
 
-    const date = new Date(year, month - 1, day, hour, minute)
-    const dateSimple = date.toLocaleDateString('en-ZA')
-
-    const right_now = new Date().getTime()
-    if(date.getTime() < right_now){
+    if(!(interaction.user.id in TimezoneList)){      
       interaction.reply({
-        content: '⛔ Cannot create timers to the past!',
+        content: '⛔ Cannot create timers if you dont have a timezone set!',
         ephemeral: true,
       })
 
       return
     }
+    const timezone = TimezoneList[interaction.user.id]
+    const date = DateTime.fromObject({year: year, month: month, day: day, hour: hour, minute: minute}, { zone: timezone })
 
     if(description == undefined){
       description = ''
@@ -62,8 +61,20 @@ export class TimerStart {
     currentTimerData.interaction = interaction
     currentTimerData.description = description
 
-    if(dateSimple === 'Invalid Date'){
+    const jsDate = new Date(year, month - 1, day, hour, minute)
+    const dateSimple = jsDate.toLocaleDateString('en-ZA')
+    if(dateSimple == 'Invalid Date'){
       createStopwatch(interaction, name, description)
+      return
+    }
+ 
+    const right_now = DateTime.now()
+    if(date.toMillis() < right_now.toMillis()){
+      interaction.reply({
+        content: '⛔ Cannot create timers to the past!',
+        ephemeral: true,
+      })
+
       return
     }
 
