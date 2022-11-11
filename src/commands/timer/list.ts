@@ -19,6 +19,13 @@ export class ListTimers {
   @SlashGroup('timer')
   list(
     @SlashOption({
+      name: 'page',
+      description: 'Page number. 5 Timers per page',
+      required: false,
+      type: ApplicationCommandOptionType.Number
+    }) page: number,
+
+    @SlashOption({
       name: 'silent',
       description: 'Should the command be only visible to you? (default: true)',
       required: false,
@@ -31,9 +38,23 @@ export class ListTimers {
       silent = true
     }
 
+    const amtTimers = Object.keys(TimerList).length
+    if(page == undefined){
+      page = 1
+    }
+
+    const maxPages = Math.ceil(amtTimers / 5)
+    if(page > maxPages){
+      interaction.reply({
+        content: `⛔ Page ${page} does not exist! (Highest page is ${maxPages})`,
+        ephemeral: true,
+      })
+      return
+    }
+
     const commandEmbed = new EmbedBuilder()
     .setColor(Colors.Green)
-    .setTitle('Timers')
+    .setTitle(amtTimers <= 5 ? 'Timers' : `Timers (page ${page}/${maxPages})`)
 
     if(Object.keys(TimerList).length == 0) {
       commandEmbed.setDescription('No timers found! 😢')
@@ -44,7 +65,17 @@ export class ListTimers {
       return
     }
 
+    let currentTimerIdx = 0
+    let pageIdx = 1
     for (const [timerName, timerData] of Object.entries(TimerList)) {
+      currentTimerIdx += 1
+      if(currentTimerIdx > 5){
+        pageIdx += 1
+      }
+
+      if(pageIdx != page){
+        continue
+      }
       const { type, startDate, endDate, author, subscribers, notifData, description, customText } = timerData
 
       const subscribersFormatted: Array<string> = []
