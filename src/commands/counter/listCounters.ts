@@ -10,7 +10,7 @@ export class ListCounters {
   async list(
     @SlashOption({
       name: 'silent',
-      description: 'Should the command be only visible by you? (default: true)',
+      description: 'Should the command be only visible to you? (default: true)',
       required: false,
       type: ApplicationCommandOptionType.Boolean
     }) silent: boolean,
