@@ -50,7 +50,6 @@ export class TimerCheck {
         + '**check** displays information depending on Timer type; stopwatch - elapsed time, timer - end date, % left\n'
         + '**subscribe** you will be pinged when the timer sends out a notification\n'
         + '**list** lists all timers and its data\n'
-        + '**help** display help about either Timers or Counters'
         },
 
         {
@@ -82,7 +81,6 @@ export class TimerCheck {
         value: '**create** creates a new Counter.\n'
         + '**check** displays who created the Counter, and its value\n'
         + '**list** lists all counters and its data\n'
-        + '**help** display help about either Timers or Counters'
         },
 
         {
