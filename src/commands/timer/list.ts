@@ -44,14 +44,6 @@ export class ListTimers {
     }
 
     const maxPages = Math.ceil(amtTimers / 5)
-    if(page > maxPages){
-      interaction.reply({
-        content: `⛔ Page ${page} does not exist! (Highest page is ${maxPages})`,
-        ephemeral: true,
-      })
-      return
-    }
-
     const commandEmbed = new EmbedBuilder()
     .setColor(Colors.Green)
     .setTitle(amtTimers <= 5 ? 'Timers' : `Timers (page ${page}/${maxPages})`)
@@ -61,6 +53,14 @@ export class ListTimers {
       interaction.reply({
         embeds: [commandEmbed],
         ephemeral: silent
+      })
+      return
+    }
+
+    if(page > maxPages){
+      interaction.reply({
+        content: `⛔ Page ${page} does not exist! (Highest page is ${maxPages})`,
+        ephemeral: true,
       })
       return
     }

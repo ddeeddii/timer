@@ -28,29 +28,29 @@ export class ListCounters {
       silent = true
     }
 
-    const amtTimers = Object.keys(CounterList).length
+    const amtCounters = Object.keys(CounterList).length
     if(page == undefined){
       page = 1
     }
 
-    const maxPages = Math.ceil(amtTimers / 10)
-    if(page > maxPages){
-      interaction.reply({
-        content: `⛔ Page ${page} does not exist! (Highest page is ${maxPages})`,
-        ephemeral: true,
-      })
-      return
-    }
-
+    const maxPages = Math.ceil(amtCounters / 10)
     const commandEmbed = new EmbedBuilder()
     .setColor(Colors.Green)
-    .setTitle(amtTimers <= 10 ? 'Counters' : `Counters (page ${page}/${maxPages})`)
-
-    if(Object.keys(CounterList).length == 0) {
+    .setTitle(amtCounters <= 10 ? 'Counters' : `Counters (page ${page}/${maxPages})`)
+    
+    if(amtCounters == 0) {
       commandEmbed.setDescription('No counters found! 😢')
       interaction.reply({
         embeds: [commandEmbed],
         ephemeral: silent
+      })
+      return
+    }
+
+    if(page > maxPages){
+      interaction.reply({
+        content: `⛔ Page ${page} does not exist! (Highest page is ${maxPages})`,
+        ephemeral: true,
       })
       return
     }
