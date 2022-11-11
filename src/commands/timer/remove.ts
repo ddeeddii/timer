@@ -20,12 +20,13 @@ export class TimerRemove {
 
       name: 'timer-name',
       description: 'Name of the timer',
+      required: true,
       type: ApplicationCommandOptionType.String,
     })
 
     @SlashOption({
       name: 'silent',
-      description: 'Should the command be only visible by you? (default: true)',
+      description: 'Should the command be only visible to you? (default: true)',
       required: false,
       type: ApplicationCommandOptionType.Boolean
     })
