@@ -77,3 +77,7 @@ export function parseTimezonesByOffset(): timezoneObj{
 
   return timezoneObj
 }
+
+export function getDiscordTimestamp(date: DateTime, symbol = 'f'){
+  return `<t:${Math.floor(date.toSeconds())}:${symbol}>`
+}

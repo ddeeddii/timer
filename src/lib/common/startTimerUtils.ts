@@ -1,5 +1,7 @@
 import { CommandInteraction, ButtonBuilder, ButtonStyle, ActionRowBuilder, MessageActionRowComponentBuilder } from 'discord.js'
+import { DateTime } from 'luxon'
 import { currentTimerData } from '../../commands/timer/startTimer.js'
+import { getDiscordTimestamp } from './miscUtils.js'
 
 export async function createStopwatch(interaction: CommandInteraction, name: string, description: string){
   await interaction.deferReply({
@@ -34,7 +36,7 @@ export async function createStopwatch(interaction: CommandInteraction, name: str
   })
 }
 
-export async function createTimer(name: string, interaction: CommandInteraction, date: Date, description: string){
+export async function createTimer(name: string, interaction: CommandInteraction, date: DateTime, description: string){
   await interaction.deferReply({
     ephemeral: true
   })
@@ -57,22 +59,11 @@ export async function createTimer(name: string, interaction: CommandInteraction,
 
   currentTimerData.row = row
 
-  const dateLiteral = date.toLocaleDateString('en-ZA', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: false
-  })
-
-  const dateSimple = date.toLocaleDateString('en-ZA')
   if(description != ''){
-    currentTimerData.content = `Create a date timer '**${name}**' for **${dateLiteral}** (${dateSimple}) with description '**${description}?**`
+    currentTimerData.content = `Create a date timer '**${name}**' for ${getDiscordTimestamp(date, 'F')} with description '**${description}?**`
   }
 
-  currentTimerData.content = `Create a date timer '**${name}**' for **${dateLiteral}** (${dateSimple})?`
+  currentTimerData.content = `Create a date timer '**${name}**' for ${getDiscordTimestamp(date, 'F')}?`
 
   interaction.editReply({
     components: [row],

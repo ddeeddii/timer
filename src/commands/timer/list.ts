@@ -1,7 +1,8 @@
 import { ApplicationCommandOptionType, Colors, CommandInteraction, EmbedBuilder } from 'discord.js'
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
-import { DateTime, Duration } from 'luxon'
+import { Duration } from 'luxon'
 import { toHuman } from '../../lib/common/dateUtils.js'
+import { getDiscordTimestamp } from '../../lib/common/miscUtils.js'
 import { TimerList } from '../../lib/dbHandler.js'
 import { TimerType } from '../../lib/types.js'
 
@@ -46,12 +47,6 @@ export class ListTimers {
     for (const [timerName, timerData] of Object.entries(TimerList)) {
       const { type, startDate, endDate, author, subscribers, notifData, description, customText } = timerData
 
-      const startDateDT = DateTime.fromJSDate(startDate)
-      const startDateString = startDateDT.setLocale('en-ZA').toLocaleString(DateTime.DATETIME_MED)
-
-      const endDateDT = DateTime.fromJSDate(endDate)
-      const endDateString = endDateDT.setLocale('en-ZA').toLocaleString(DateTime.DATETIME_MED)
-
       const subscribersFormatted: Array<string> = []
       subscribers.forEach((subscriber) => {
         subscribersFormatted.push(`<@${subscriber}>`)
@@ -69,7 +64,7 @@ export class ListTimers {
         notifDataFormatted.push(`\n<#${channel}>: ${durationString}`)
       }
 
-      const endDateShow = type == TimerType.standard ? `**End Date**: ${endDateString}\n` : ''
+      const endDateShow = type == TimerType.standard ? `**End Date**: ${getDiscordTimestamp(endDate)}\n` : ''
       const descriptionShow = description == '' ? '' : `**Description**: ${description}\n`
 
       let hasCustomText = true
@@ -84,7 +79,7 @@ export class ListTimers {
           name: `**__${timerName}__**`,
           value: `${descriptionShow}`
           + `**Type**: ${typeToString[type]}\n`
-          + `**Start Date**: ${startDateString}\n`
+          + `**Start Date**: ${getDiscordTimestamp(startDate)}\n`
           + `${endDateShow}`
           + `**Author**: <@${author}>\n`
           + `**Subscribers**: ${subscribersFormatted.join(', ')}\n`

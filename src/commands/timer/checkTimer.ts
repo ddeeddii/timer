@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteracti
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
 import { DateTime } from 'luxon'
 import { getTimeDifference } from '../../lib/common/dateUtils.js'
-import { getAutocomplete } from '../../lib/common/miscUtils.js'
+import { getAutocomplete, getDiscordTimestamp } from '../../lib/common/miscUtils.js'
 import { TimerList } from '../../lib/dbHandler.js'
 import { TimerType } from '../../lib/types.js'
 
@@ -47,13 +47,10 @@ export class TimerCheck {
       })
     }
 
-    const timerDT = DateTime.fromJSDate(timer.endDate)
-    const timeString = timerDT.setLocale('en-ZA').toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)
-
     if(timer.type === TimerType.stopwatch){
-      const timeDiff = getTimeDifference(timer.startDate, new Date())
+      const timeDiff = getTimeDifference(timer.startDate, DateTime.now())
 
-      const replyContent = `${timeDiff} have elapsed since **${searchText}** (${timeString})`
+      const replyContent = `${timeDiff} have elapsed since **${searchText}** (${getDiscordTimestamp(timer.endDate)})`
 
       interaction.reply({
         content: replyContent,
@@ -62,17 +59,16 @@ export class TimerCheck {
       return
     }
 
-    const timeDiff = getTimeDifference(new Date(), timer.endDate)
-    
-    const rightNowDate = new Date()
+    const timeDiff = getTimeDifference(DateTime.now(), timer.endDate)
+    const rightNowDate = DateTime.now()
 
-    const percentOne = timer.endDate.getTime() - rightNowDate.getTime()
-    const percentTwo = timer.endDate.getTime() - timer.startDate.getTime()
+    const percentOne = timer.endDate.toMillis() - rightNowDate.toMillis()
+    const percentTwo = timer.endDate.toMillis() - timer.startDate.toMillis()
     const rawPercent = percentOne / percentTwo
 
     const timePercentDiff = Math.round(rawPercent * 1000) / 10 
 
-    const replyContent = `${timeDiff} remaining until **${searchText}** (${timeString}). Only ${timePercentDiff}% remaining!`
+    const replyContent = `${timeDiff} remaining until **${searchText}** (${getDiscordTimestamp(timer.endDate)}). Only ${timePercentDiff}% remaining!`
     interaction.reply({
       content: replyContent,
       ephemeral: silent

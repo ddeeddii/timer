@@ -17,9 +17,9 @@ export function toHuman(dur: Duration, smallestUnit = 'seconds'): string {
   return dur2.toHuman()
 }
 
-export function getTimeDifference(startDate: Date, endDate: Date, smallestUnit = 'seconds'){
-  const start = DateTime.fromJSDate(startDate).setLocale('en-ZA')
-  const end = DateTime.fromJSDate(endDate).setLocale('en-ZA')
+export function getTimeDifference(startDate: DateTime, endDate: DateTime, smallestUnit = 'seconds'){
+  const start = startDate.setLocale('en-ZA')
+  const end = endDate.setLocale('en-ZA')
 
   const dryDiff = end.diff(start)
   if(dryDiff.hours > 1){

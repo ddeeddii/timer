@@ -14,6 +14,8 @@ export const TimezoneList: TimezoneListInterface = {}
 
 // Setup database
 import { JsonDB, Config } from 'node-json-db'
+import { DateTime } from 'luxon'
+import { assert } from 'console'
 
 const db = new JsonDB(new Config('db/db.json', true, true, '/'))
 export async function initDatabase(){
@@ -25,6 +27,8 @@ export async function initDatabase(){
 
     await loadDatabase()
 	} catch(error) {
+    console.log(error)
+  
 		console.log(chalk.red('\nNo database found'))
 		console.log('Initalizing empty database...')
     await db.push('/data', GlobalData)
@@ -37,8 +41,15 @@ async function loadDatabase(){
 
   const data = await db.getData('/data') as GlobalDataInterface
 
-  for (const [name, timerData] of Object.entries(data.timers)) {
+  for (const [name, timerData] of Object.entries(data.timers)){
     TimerList[name] = timerData
+
+    // node-json-db improperly saves DateTime objects as Dates, without timezones
+    // This makes them DateTimes again, and re-adds timezones
+    const timezone = timerData.timezone
+    TimerList[name].startDate = DateTime.fromJSDate(timerData.startDate as unknown as Date).setZone(timezone)
+    TimerList[name].endDate = DateTime.fromJSDate(timerData.endDate as unknown as Date).setZone(timezone)
+    TimerList[name].lastNotifDate = DateTime.fromJSDate(timerData.lastNotifDate as unknown as Date).setZone(timezone)
   }
 
   for (const [name, counterData] of Object.entries(data.counters)) {
@@ -73,11 +84,13 @@ export async function syncDatabase(dbPath: dbPaths){
 }
 
 // Main exports
-export function createNewTimer(name: string, type: TimerType, date: Date, creator: string, description = '', notifData = {}) {
-  const rightNow = new Date()
-  rightNow.setMilliseconds(0)
-  rightNow.setSeconds(0)
+export function createNewTimer(name: string, type: TimerType, date: DateTime, creator: string, description = '', notifData = {}) {
+  const timezone = TimezoneList[creator]
 
+  const rightNow = DateTime.now().setZone(timezone)
+  rightNow.set({millisecond: 0, second: 0})
+
+  assert(date.zoneName === timezone)
   const timer = {
     type: type,
     startDate: rightNow,
@@ -87,6 +100,7 @@ export function createNewTimer(name: string, type: TimerType, date: Date, creato
     subscribers: [creator],
     description: description,
     notifData: notifData,
+    timezone: timezone,
     customText: {
       'end': '',
       'standard': ''

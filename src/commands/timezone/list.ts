@@ -1,11 +1,8 @@
 import { ApplicationCommandOptionType, Colors, CommandInteraction, EmbedBuilder } from 'discord.js'
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
 import { DateTime } from 'luxon'
-import { parseTimezonesByOffset } from '../../lib/common/miscUtils.js'
-
-function getDiscordLongTimestamp(date: DateTime, symbol = 'f'){
-  return `<t:${Math.floor(date.toSeconds())}:${symbol}>`
-}
+import { getDiscordTimestamp, parseTimezonesByOffset } from '../../lib/common/miscUtils.js'
+import { TimezoneList } from '../../lib/dbHandler.js'
 
 type parsedTimezoneInstance = [string, {timezone: string, users: Array<string>}]
 function compareTimezones(a: parsedTimezoneInstance , b: parsedTimezoneInstance) {
@@ -40,9 +37,19 @@ export class ListTimezones {
       silent = true
     }
 
+    if((interaction.user.id in TimezoneList) == false && timeArg != undefined ){      
+      interaction.reply({
+        content: '⛔ Cannot check a specific time if you dont have a timezone set!',
+        ephemeral: true,
+      })
+
+      return
+    }
+
     let defaultDate = DateTime.now()
     if(timeArg != undefined){
-      const dateDT = DateTime.fromFormat(timeArg, 'yyyy/mm/dd hh:mm')
+      const timezone = TimezoneList[interaction.user.id]
+      const dateDT = DateTime.fromFormat(timeArg, 'yyyy/mm/dd hh:mm', {zone: timezone})
 
       if(dateDT.isValid){
         defaultDate = dateDT
@@ -55,14 +62,14 @@ export class ListTimezones {
     .addFields([
       {
         name: '**Relative to**',
-        value: `${getDiscordLongTimestamp(defaultDate)}`,
+        value: `${getDiscordTimestamp(defaultDate)}`,
         inline: true
       }
     ])
 
     const parsedTimezones = parseTimezonesByOffset()
     const sortedTimezonesArray = Object.entries(parsedTimezones).sort(compareTimezones)
-
+    
     for (const data of sortedTimezonesArray) {
       const offset = data[0]
       const { timezone, users } = data[1]

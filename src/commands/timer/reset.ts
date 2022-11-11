@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, PermissionFlagsBits } from 'discord.js'
 import { Discord, Slash, SlashChoice, SlashGroup, SlashOption } from 'discordx'
 import { dbPaths, syncDatabase, TimerList } from '../../lib/dbHandler.js'
-import { getAutocomplete } from '../../lib/common/miscUtils.js'
+import { getAutocomplete, getDiscordTimestamp } from '../../lib/common/miscUtils.js'
 import { DateTime } from 'luxon'
 
 @Discord()
@@ -75,15 +75,10 @@ export class TimerSubscribe {
     let reply = ''
 
     if(option == 'start date'){
-      const rightNow = new Date()
-      rightNow.setMilliseconds(0)
-      rightNow.setSeconds(0)
+      const rightNow = DateTime.now().set({second: 0, millisecond: 0})
 
       timer.startDate = rightNow
-
-      const timerDT = DateTime.fromJSDate(rightNow)
-      const timeString = timerDT.setLocale('en-ZA').toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)
-      reply = `Set **${searchTimerName}**'s start date to ${timeString}.`
+      reply = `Set **${searchTimerName}**'s start date to ${getDiscordTimestamp(rightNow)}.`
     } else if(option == 'notifications') {
       timer.notifData = {}
       reply = `Removed all notification settings of '${searchTimerName}'.`

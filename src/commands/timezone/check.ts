@@ -1,11 +1,8 @@
 import { ApplicationCommandOptionType, Colors, CommandInteraction, EmbedBuilder, GuildMember } from 'discord.js'
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx'
 import { DateTime } from 'luxon'
+import { getDiscordTimestamp } from '../../lib/common/miscUtils.js'
 import { TimezoneList } from '../../lib/dbHandler.js'
-
-function getDiscordTimestamp(date: DateTime, symbol = 'f'){
-  return `<t:${Math.floor(date.toSeconds())}:${symbol}>`
-}
 
 @Discord()
 @SlashGroup({ name: 'timezone', description: 'Timezone' })
@@ -47,9 +44,19 @@ export class ListTimezones {
       return
     }
 
+    if((interaction.user.id in TimezoneList) == false && timeArg != undefined ){      
+      interaction.reply({
+        content: '⛔ Cannot check a specific time if you dont have a timezone set!',
+        ephemeral: true,
+      })
+
+      return
+    }
+
     let defaultDate = DateTime.now()
     if(timeArg != undefined){
-      const dateDT = DateTime.fromFormat(timeArg, 'yyyy/mm/dd hh:mm')
+      const timezone = TimezoneList[interaction.user.id]
+      const dateDT = DateTime.fromFormat(timeArg, 'yyyy/mm/dd hh:mm', {zone: timezone})
 
       if(dateDT.isValid){
         defaultDate = dateDT
