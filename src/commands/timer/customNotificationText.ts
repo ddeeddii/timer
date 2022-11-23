@@ -28,6 +28,13 @@ export class CustomNotify {
       required: true,
     }) searchTimerName: string,
 
+    @SlashOption({
+      name: 'text',
+      description: 'Custom text',
+      required: true,
+      type: ApplicationCommandOptionType.String
+    }) text: string,
+
     type: 'end' | 'standard',
     @SlashOption({
       name: 'notification-type',
@@ -37,13 +44,6 @@ export class CustomNotify {
     })
     @SlashChoice({ name: 'On timer end', value: 'end' })
     @SlashChoice({ name: 'Standard notification', value: 'standard' })
-
-    @SlashOption({
-      name: 'text',
-      description: 'Custom text',
-      required: true,
-      type: ApplicationCommandOptionType.String
-    }) text: string,
     
     @SlashOption({
       name: 'silent',
@@ -111,7 +111,7 @@ export class CustomNotify {
     syncDatabase(dbPaths.timers)
 
     interaction.reply({
-      content: `Set **${searchTimerName}**'s notification text to`,
+      content: `Set **${searchTimerName}**'s notification text to ${text}`,
       ephemeral: silent,
     })
   }
