@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, CommandInteraction, EmbedBuilder } from '
 import { Discord, Slash, SlashChoice, SlashOption } from 'discordx'
 
 @Discord()
-export class TimerCheck {
+export class help {
   @Slash({ name: 'help', description: 'Display help about timers/counters' })
   help(
     help: string,
@@ -12,6 +12,7 @@ export class TimerCheck {
       required: true,
       type: ApplicationCommandOptionType.String,
     })
+    @SlashChoice({ name: 'General', value: 'general' })
     @SlashChoice({ name: 'Timer', value: 'timer' })
     @SlashChoice({ name: 'Counter', value: 'counter' })
     @SlashChoice({ name: 'Timezone', value: 'timezone' })
@@ -145,6 +146,21 @@ export class TimerCheck {
         {
           name: '**__Moderators__**',
           value: 'Moderators with "Kick user" permissions can set other people\'s timezones'
+        },
+      ])
+    } else if(help == 'general'){
+      embed = new EmbedBuilder()
+      .setTitle('General')
+      .setFooter({text: 'Made with ❤ by ded'})
+      .addFields([
+        {
+          name: '**__License__**',
+          value: 'This bot is free and open source under the GPL-2.0 license\n'
+          + 'You can find the source code here: <https://github.com/ddeeddii/timer>'
+        },
+        {
+          name: '**__Bot Owner__**',
+          value: '**setpresence** Set the bot\'s status and activity\n'
         },
       ])
     } else { 
