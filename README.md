@@ -23,7 +23,7 @@ You can create a counter, add any value to it or set it to something.
 # Usage
 - Clone the repo
 - Run `npm install`
-- Configure `src/config/config.json` with a token
+- Configure `src/config/config.json` with a token (optionally, fill in ownerId with your discord if you want to set the bot's presence)
 - Run `npm run build` & `npm run start` or start with Typescript directly via `npm run dev`
 
 Created using `discordx` & `create-discordx`
