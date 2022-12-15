@@ -55,9 +55,9 @@ export class ListTimezones {
 
     let defaultDate = DateTime.now()
     if(timeArg != undefined){
-      const timezone = TimezoneList[interaction.user.id]
-      const dateDT = DateTime.fromFormat(timeArg, 'yyyy/mm/dd hh:mm', {zone: timezone})
-
+      const timezone = TimezoneList[interaction.user.id] 
+      const dateDT = DateTime.fromFormat(timeArg, 'yyyy/mm/dd hh:mm', {zone: timezone}).minus( {months: 1} )
+      // We subtract a month because fromFormat uses 0-indexed months
       if(dateDT.isValid){
         defaultDate = dateDT
       }
