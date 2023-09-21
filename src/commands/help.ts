@@ -155,7 +155,7 @@ export class help {
       .addFields([
         {
           name: '**__License__**',
-          value: 'This bot is free and open source under the GPL-2.0 license\n'
+          value: 'This bot is free and open source under the GLWT public license\n'
           + 'You can find the source code here: <https://github.com/ddeeddii/timer>'
         },
         {

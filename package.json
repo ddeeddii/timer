@@ -2,7 +2,7 @@
   "name": "timer",
   "version": "1.0.0",
   "private": true,
-  "license": "GNU GPLv2",
+  "license": "GLWTPL",
   "type": "module",
   "main": "build/main.js",
   "scripts": {
